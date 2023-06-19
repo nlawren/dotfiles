@@ -79,6 +79,7 @@ fi
 alias ll='ls -l --group-directories-first'
 alias l='ls -l'
 alias la='ls -Al'
+alias lt='ls -lart'
 
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
