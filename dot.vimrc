@@ -1,3 +1,6 @@
+" My .vimrc 
+" in progress and in draft
+
 set wildmenu
 
 " Always show current position
@@ -24,7 +27,7 @@ set incsearch
 " Enable syntax highlighting
 syntax enable
 
-colorscheme desert
+colorscheme torte
 
 set background=dark
 
