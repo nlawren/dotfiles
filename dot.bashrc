@@ -1,3 +1,5 @@
+# crafted by hand
+# currently just for debian and ubuntu
 
 # If not running interactively, don't do anything
 case $- in
