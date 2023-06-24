@@ -5,4 +5,7 @@ These dotfiles are located in a seperate directory (~/.dotfiles) and symlinked t
 
 Useful github information on dotfiles: http://dotfiles.github.io/
 
+To do:
+
+* Looking at whether to use a "move in" or similar type of script. Or just manual.
 
