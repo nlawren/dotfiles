@@ -8,12 +8,9 @@ case $- in
 esac
 
 HISTCONTROL=ignoreboth
-shopt -s histappend
 HISTSIZE=100000
 HISTFILESIZE=200000
-
-# check the window size after each command and, if necessary,
-# update the values of LINES and COLUMNS.
+shopt -s histappend
 shopt -s checkwinsize
 
 # make less more friendly for non-text input files, see lesspipe(1)
