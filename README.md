@@ -11,4 +11,6 @@ To do:
 * also need to investigate using a checksum/versioning idea - perhaps with a python script for checking.
 * Updated - use Ansible and apply dotfiles from a repository. Use the stat and potentially MD5 modules to check versions.
 * Use Ansible from a central repo.
+* Look into using Aqua: https://aquaproj.github.io/docs/
+
 
