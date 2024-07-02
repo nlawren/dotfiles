@@ -29,8 +29,9 @@ conky.config = {
     gap_x = 10,
     gap_y = 10,
     minimum_height = 5,
-    minimum_width = 5,
+    minimum_width = 300,
     net_avg_samples = 2,
+    diskio_avg_samples = 10,
     no_buffers = true,
     out_to_console = false,
     out_to_ncurses = false,
@@ -44,7 +45,7 @@ conky.config = {
     show_graph_range = false,
     show_graph_scale = false,
     stippled_borders = 0,
-    update_interval = 5.0,
+    update_interval = 2.0,
     uppercase = false,
     use_spacer = 'none',
     use_xft = true,
@@ -53,13 +54,14 @@ conky.config = {
 conky.text = [[
 ${voffset -13}
 ${color orange}System ${hr}
-${color grey}Frequency:${color} $freq Mhz ${color grey}Temp:${alignc}${color} ${acpitemp}°c ${alignr}${color grey}Usage:${color} ${cpu}% 
+${color grey}Freq:${color} $freq Mhz ${goto 135}${color grey}Temp:${color} ${acpitemp}°c ${alignr}${color grey}Usage:${color} ${cpu}% 
 ${color grey}${cpugraph 00FF00 FF0000 -t}
-${color grey}RAM Usage:$color $memperc% - $mem / $memmax
+${color grey}mem Usage:$color $memperc% ${alignr} $mem / $memmax
+${color grey}IO Read / Write: ${color}${alignr} ${diskio_read /dev/nvme0n1} / ${diskio_write /dev/nvme0n1}
 ${voffset -13}
 ${color orange}Networking ${hr}
-${color grey}SSID: ${color}${wireless_essid wlp3s0}
-${color grey}IP: ${color}${addr wlp3s0}
-${color lightblue}Down: ${downspeed wlp3s0}/s${goto 150}Up: ${font}${color lightgreen}${upspeed wlp3s0}/s
-${color lightblue}${downspeedgraph wlp3s0 40,135 95ec8b FF0000 -t}${offset 6}${color lightgreen}${upspeedgraph wlp3s0 40,135 95ec8b FF0000 -t}
+${color grey}IP: ${color}${addr wlp3s0}${alignr}${wireless_ap wlp3s0}
+${color grey}stats: ${color}${wireless_link_qual_perc wlp3s0}% ${goto 135}${wireless_bitrate wlp3s0} ${alignr}${wireless_freq wlp3s0}
+${color lightblue}Down: ${downspeed wlp3s0}/s${goto 160}Up: ${font}${color lightgreen}${upspeed wlp3s0}/s
+${color lightblue}${downspeedgraph wlp3s0 40,145 95ec8b FF0000 -t}${offset 6}${color lightgreen}${upspeedgraph wlp3s0 40,145 95ec8b FF0000 -t}
 ]]
