@@ -7,10 +7,19 @@ case $- in
       *) return;;
 esac
 
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
 HISTCONTROL=ignoreboth
+
+# append to the history file, don't overwrite it
+shopt -s histappend
+
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=100000
 HISTFILESIZE=200000
-shopt -s histappend
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
 # make less more friendly for non-text input files, see lesspipe(1)
@@ -25,6 +34,10 @@ fi
 case "$TERM" in
     xterm-color|*-256color) color_prompt=yes;;
 esac
+
+# uncomment for a colored prompt, if the terminal has the capability; turned
+# off by default to not distract the user: the focus in a terminal window
+# should be on the output of commands, not on the prompt
 force_color_prompt=yes
 
 if [ -n "$force_color_prompt" ]; then
@@ -64,6 +77,11 @@ if [ -x /usr/bin/dircolors ]; then
     alias egrep='egrep --color=auto'
 fi
 
+# Change the colour of directories to be more readable against a dark background
+# reference: https://askubuntu.com/questions/466198/how-do-i-change-the-color-for-directories-with-ls-in-the-console
+LS_COLORS=$LS_COLORS:'di=1;36'
+export LS_COLORS
+
 # some more ls aliases
 alias ll='ls -l --group-directories-first'
 alias l='ls -l'
@@ -73,13 +91,6 @@ alias lt='ls -lart'
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
-
-alias dos2unix='perl -i.bak -pe "s/\015//"'
-alias unix2dos='perl -i.bak -pe "s/$/\r/"'
-alias rm="rm -i"
-alias cp="cp -i"
-alias mv="mv -i"
-
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -96,11 +107,22 @@ fi
 eval "$(starship init bash)"
 
 # pyenv init
-export PATH="$HOME/.pyenv/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+# Commented out while trying Rye
+# export PYENV_ROOT="$HOME/.pyenv"
+# [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+# eval "$(pyenv init -)"
+# eval "$(pyenv virtualenv-init -)"
 
 # zoxide
 eval "$(zoxide init bash)"
 
 complete -C /usr/bin/terraform terraform
+
+# pipx
+eval "$(register-python-argcomplete pipx)"
+
+# rye
+source "$HOME/.rye/env"
+source ~/.local/share/bash-completion/completions/rye.bash
+
+source <(kubectl completion bash)
