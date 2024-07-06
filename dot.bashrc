@@ -125,4 +125,8 @@ eval "$(register-python-argcomplete pipx)"
 source "$HOME/.rye/env"
 source ~/.local/share/bash-completion/completions/rye.bash
 
+# Kubernetes
 source <(kubectl completion bash)
+alias k=kubectl
+complete -F __start_kubectl k
+
