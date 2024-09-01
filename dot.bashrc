@@ -71,7 +71,6 @@ esac
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     alias ls='ls --color=auto'
-
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
@@ -130,3 +129,4 @@ source <(kubectl completion bash)
 alias k=kubectl
 complete -F __start_kubectl k
 
+# Add a correct 1password ssh agent sock statement here
