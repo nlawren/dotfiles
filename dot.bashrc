@@ -130,3 +130,4 @@ alias k=kubectl
 complete -F __start_kubectl k
 
 # Add a correct 1password ssh agent sock statement here
+export SSH_AUTH_SOCK=~/.1password/agent.sock
