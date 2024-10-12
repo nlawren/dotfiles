@@ -7,6 +7,11 @@ case $- in
       *) return;;
 esac
 
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/.local/bin" ] ; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
@@ -105,24 +110,10 @@ fi
 # Starship prompt
 eval "$(starship init bash)"
 
-# pyenv init
-# Commented out while trying Rye
-# export PYENV_ROOT="$HOME/.pyenv"
-# [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-# eval "$(pyenv init -)"
-# eval "$(pyenv virtualenv-init -)"
-
 # zoxide
 eval "$(zoxide init bash)"
 
 complete -C /usr/bin/terraform terraform
-
-# pipx
-eval "$(register-python-argcomplete pipx)"
-
-# rye
-source "$HOME/.rye/env"
-source ~/.local/share/bash-completion/completions/rye.bash
 
 # Kubernetes
 source <(kubectl completion bash)
@@ -131,3 +122,8 @@ complete -F __start_kubectl k
 
 # Add a correct 1password ssh agent sock statement here
 export SSH_AUTH_SOCK=~/.1password/agent.sock
+
+# Now using uv install of rye/pyenv/pipx
+. "$HOME/.cargo/env"
+eval "$(uv generate-shell-completion bash)"
+eval "$(uvx --generate-shell-completion bash)"
