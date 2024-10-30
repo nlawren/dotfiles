@@ -113,6 +113,7 @@ eval "$(starship init bash)"
 # zoxide
 eval "$(zoxide init bash)"
 
+# Terraform completion
 complete -C /usr/bin/terraform terraform
 
 # Kubernetes
