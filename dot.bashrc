@@ -108,10 +108,12 @@ if ! shopt -oq posix; then
 fi
 
 # Starship prompt
-eval "$(starship init bash)"
+if [ -f ~/.local/bin/starship]; then
+    eval "$(starship init bash)"
 
 # zoxide
-eval "$(zoxide init bash)"
+if [ -f ~./local/bin/zoxide ]; then
+    eval "$(zoxide init bash)"
 
 # Terraform completion
 complete -C /usr/bin/terraform terraform
@@ -121,10 +123,10 @@ source <(kubectl completion bash)
 alias k=kubectl
 complete -F __start_kubectl k
 
-# Add a correct 1password ssh agent sock statement here
+# Added a 1password ssh agent sock statement to allow passthrough to devcontainers
 export SSH_AUTH_SOCK=~/.1password/agent.sock
 
-# Now using uv install of rye/pyenv/pipx
+# Now using uv instead of rye/pyenv/pipx
 . "$HOME/.cargo/env"
 eval "$(uv generate-shell-completion bash)"
 eval "$(uvx --generate-shell-completion bash)"
