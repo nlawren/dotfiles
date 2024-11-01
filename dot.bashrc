@@ -116,7 +116,8 @@ if [ -f ~./local/bin/zoxide ]; then
     eval "$(zoxide init bash)"
 
 # Terraform completion
-complete -C /usr/bin/terraform terraform
+if [ -f /usr/bin/terraform ]; then
+    complete -C /usr/bin/terraform terraform
 
 # Kubernetes
 source <(kubectl completion bash)
