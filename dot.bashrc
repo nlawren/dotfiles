@@ -95,6 +95,20 @@ alias lt='ls -lart'
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
+function private()
+{
+    find $HOME -type d -exec chmod 700 {} \;
+    find $HOME -type f -exec chmod 600 {} \;
+    find $HOME/bin -type f -exec chmod +x {} \;
+    find $HOME/.local/bin -type f -exec chmod +x {} \;
+}
+
+xtitle () { 
+    echo -n -e "\033]0;$*\007"
+}
+
+alias duck='du -ck * | sort -rn |head -11'
+alias dusk='du -sk * | sort -rn |head -20'
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
