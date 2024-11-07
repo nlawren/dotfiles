@@ -95,6 +95,7 @@ alias lt='ls -lart'
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
+
 function private()
 {
     find $HOME -type d -exec chmod 700 {} \;
@@ -142,6 +143,7 @@ complete -F __start_kubectl k
 export SSH_AUTH_SOCK=~/.1password/agent.sock
 
 # Now using uv instead of rye/pyenv/pipx
-. "$HOME/.cargo/env"
-eval "$(uv generate-shell-completion bash)"
-eval "$(uvx --generate-shell-completion bash)"
+if [ -f ~/.cargo/bin/uv]; then
+    . "$HOME/.cargo/env"
+    eval "$(uv generate-shell-completion bash)"
+    eval "$(uvx --generate-shell-completion bash)"
