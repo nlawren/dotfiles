@@ -125,19 +125,22 @@ fi
 # Starship prompt
 if [ -f ~/.local/bin/starship]; then
     eval "$(starship init bash)"
+fi
 
 # zoxide
 if [ -f ~./local/bin/zoxide ]; then
     eval "$(zoxide init bash)"
+fi
 
 # Terraform completion
 if [ -f /usr/bin/terraform ]; then
     complete -C /usr/bin/terraform terraform
+fi
 
 # Kubernetes
-source <(kubectl completion bash)
-alias k=kubectl
-complete -F __start_kubectl k
+# source <(kubectl completion bash)
+# alias k=kubectl
+# complete -F __start_kubectl k
 
 # Added a 1password ssh agent sock statement to allow passthrough to devcontainers
 export SSH_AUTH_SOCK=~/.1password/agent.sock
@@ -147,3 +150,4 @@ if [ -f ~/.cargo/bin/uv]; then
     . "$HOME/.cargo/env"
     eval "$(uv generate-shell-completion bash)"
     eval "$(uvx --generate-shell-completion bash)"
+fi
