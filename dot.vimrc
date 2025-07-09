@@ -51,8 +51,19 @@ set statusline=\ %F%m%r%h\ %w\ \ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
 filetype plugin on
 filetype indent on
 
-autocmd FileType yaml setlocal tabstop=2 softtabstop=2 shiftwidth=2 expandtab
-autocmd BufNewFile,BufRead *.py set tabstop=4 softtabstop=4 shiftwidth=4 expandtab smarttab autoindent
+set autoindent
+set smartindent
+set number
+set relativenumber
 
+" Enable syntax highlighting and indentation for JSON
+autocmd FileType json setlocal ts=2 sw=2 expandtab
 
+" Enable syntax highlighting and indentation for YAML
+autocmd FileType yaml setlocal ts=2 sw=2 expandtab
 
+" Enable syntax highlighting and indentation for Markdown
+autocmd FileType markdown setlocal ts=4 sw=4 expandtab
+
+" Python settings
+autocmd FileType python setlocal ts=4 sw=4 expandtab
