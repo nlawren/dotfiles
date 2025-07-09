@@ -27,7 +27,7 @@ set incsearch
 " Enable syntax highlighting
 syntax enable
 
-colorscheme torte
+colorscheme sorbet
 
 set background=dark
 
