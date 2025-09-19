@@ -76,6 +76,7 @@ esac
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     alias ls='ls --color=auto'
+
     alias grep='grep --color=auto'
     alias fgrep='fgrep --color=auto'
     alias egrep='egrep --color=auto'
@@ -96,21 +97,6 @@ if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
 
-function private()
-{
-    find $HOME -type d -exec chmod 700 {} \;
-    find $HOME -type f -exec chmod 600 {} \;
-    find $HOME/bin -type f -exec chmod +x {} \;
-    find $HOME/.local/bin -type f -exec chmod +x {} \;
-}
-
-xtitle () { 
-    echo -n -e "\033]0;$*\007"
-}
-
-alias duck='du -ck * | sort -rn |head -11'
-alias dusk='du -sk * | sort -rn |head -20'
-
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
@@ -123,31 +109,34 @@ if ! shopt -oq posix; then
 fi
 
 # Starship prompt
-if [ -f ~/.local/bin/starship]; then
-    eval "$(starship init bash)"
-fi
+eval "$(starship init bash)"
 
 # zoxide
-if [ -f ~./local/bin/zoxide ]; then
-    eval "$(zoxide init bash)"
-fi
+eval "$(zoxide init bash)"
 
-# Terraform completion
-if [ -f /usr/bin/terraform ]; then
-    complete -C /usr/bin/terraform terraform
-fi
+complete -C /usr/bin/terraform terraform
 
-# Kubernetes
-# source <(kubectl completion bash)
-# alias k=kubectl
-# complete -F __start_kubectl k
+source <(kubectl completion bash)
+alias k=kubectl
+complete -o default -F __start_kubectl k
+
+eval "$(uv generate-shell-completion bash)"
+eval "$(uvx --generate-shell-completion bash)"
 
 # Added a 1password ssh agent sock statement to allow passthrough to devcontainers
 export SSH_AUTH_SOCK=~/.1password/agent.sock
 
-# Now using uv instead of rye/pyenv/pipx
-if [ -f ~/.cargo/bin/uv]; then
-    . "$HOME/.cargo/env"
-    eval "$(uv generate-shell-completion bash)"
-    eval "$(uvx --generate-shell-completion bash)"
-fi
+. "$HOME/.atuin/bin/env"
+
+[[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
+eval "$(atuin init bash)"
+
+# DOTNET configuration for .net6 for az400 learning
+PATH=$PATH:"$HOME/.local/dotnet"
+export DOTNET_ROOT=$HOME/.local/dotnet
+
+# Updating umask
+umask 0077
+
+# nvim
+[[ -d $HOME/.local/bin/nvim ]] && export PATH="$PATH:$HOME/.local/bin/nvim/bin"
