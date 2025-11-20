@@ -85,7 +85,7 @@ fi
 # Change the colour of directories to be more readable against a dark background
 # reference: https://askubuntu.com/questions/466198/how-do-i-change-the-color-for-directories-with-ls-in-the-console
 #LS_COLORS=$LS_COLORS:'di=1;36'
-LS_COLORS='ow=01;33:tw=01;36:di=01;36:'
+LS_COLORS=#LS_COLORS:'ow=01;33:tw=01;36:di=01;36:'
 export LS_COLORS
 
 # some more ls aliases
