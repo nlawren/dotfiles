@@ -7,6 +7,8 @@ default:
 #rsync to all
 
 #rsync to agedashi
+sync-agedashi:
+        scp -O * agedashi.lan:/var/services/homes/nlawren/.local/bin/
 
 #rsync to all x64 servers
 
