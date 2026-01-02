@@ -1,14 +1,15 @@
-# vim: set ft=make :
+# vim: ai et ts=4 sw=4
+set dotenv-load := true
 
-# List all tasks
-default:
-    @just --list
+# list all tasks and help text
+help:
+    @just --list -f "{{ justfile() }}"
 
 #rsync to all
 
 #rsync to agedashi
 sync-agedashi:
-        scp -O * agedashi.lan:/var/services/homes/nlawren/.local/bin/
+    rsync -av ~/.local/store/local.bin/aarch64/ agedashi.lan:/var/services/homes/nlawren/.local/bin/
 
 #rsync to all x64 servers
 
