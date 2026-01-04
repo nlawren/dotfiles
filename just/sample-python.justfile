@@ -1,3 +1,4 @@
+# vim: ai et ts=4 sw=4
 set dotenv-load := true
 
 help:
