@@ -88,10 +88,12 @@ LS_COLORS=$LS_COLORS:'ow=01;33:tw=01;36:di=01;36:'
 export LS_COLORS
 
 # some more ls aliases
-alias ll='ls -l --group-directories-first'
+# alias ll='ls -l --group-directories-first'
+# alias lt='ls -lart'
+alias ll='eza --long --all --group-directories-first --total-size'
+alias lt='eza -snew -l'
 alias l='ls -l'
 alias la='ls -Al'
-alias lt='ls -lart'
 
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
@@ -139,5 +141,3 @@ export DOTNET_ROOT=$HOME/.local/dotnet
 # Updating umask
 umask 0077
 
-# nvim
-[[ -d $HOME/.local/bin/nvim ]] && export PATH="$PATH:$HOME/.local/bin/nvim/bin"
