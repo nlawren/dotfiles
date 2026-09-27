@@ -1,143 +1,96 @@
-# crafted by hand
-# currently just for debian and ubuntu
+# ~/.bashrc — interactive shell config only.
+# Environment (PATH, DOTNET_ROOT, umask) lives in ~/.profile so GUI apps,
+# scripts and non-interactive shells see it too.
 
-# If not running interactively, don't do anything
-case $- in
-    *i*) ;;
-      *) return;;
-esac
+case $- in *i*) ;; *) return ;; esac
 
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/.local/bin" ] ; then
-    PATH="$HOME/.local/bin:$PATH"
-fi
+_has_cmd() { command -v "$1" >/dev/null 2>&1; }
 
-# don't put duplicate lines or lines starting with space in the history.
-# See bash(1) for more options
+# --- Shell behaviour -------------------------------------------------------
 HISTCONTROL=ignoreboth
-
-# append to the history file, don't overwrite it
-shopt -s histappend
-
-# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=100000
 HISTFILESIZE=200000
+HISTTIMEFORMAT='%F %T '          # timestamps in the fallback bash history
+shopt -s histappend checkwinsize globstar
 
-# check the window size after each command and, if necessary,
-# update the values of LINES and COLUMNS.
-shopt -s checkwinsize
+[[ -x /usr/bin/lesspipe ]] && eval "$(SHELL=/bin/sh lesspipe)"
 
-# make less more friendly for non-text input files, see lesspipe(1)
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+# --- Tool manager (early, so later `command -v` finds mise-managed tools) -
+_has_cmd mise && eval "$(mise activate bash)"
 
-# set variable identifying the chroot you work in (used in the prompt below)
-if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-    debian_chroot=$(cat /etc/debian_chroot)
+# --- 1Password SSH agent (don't clobber a forwarded agent over SSH) --------
+if [[ -z ${SSH_CONNECTION:-} && -S $HOME/.1password/agent.sock ]]; then
+    export SSH_AUTH_SOCK=$HOME/.1password/agent.sock
 fi
 
-# set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-    xterm-color|*-256color) color_prompt=yes;;
-esac
+# --- Colours ---------------------------------------------------------------
+if _has_cmd dircolors; then
+    if [[ -r ~/.dircolors ]]; then eval "$(dircolors -b ~/.dircolors)"
+    else eval "$(dircolors -b)"; fi
+fi
+# Readable dirs on dark backgrounds
+LS_COLORS+=':ow=01;33:tw=01;36:di=01;36'
+export LS_COLORS
 
-# uncomment for a colored prompt, if the terminal has the capability; turned
-# off by default to not distract the user: the focus in a terminal window
-# should be on the output of commands, not on the prompt
-force_color_prompt=yes
+# --- Aliases ---------------------------------------------------------------
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+alias l='ls -l'
+if _has_cmd eza; then
+    alias ll='eza --long --all --group-directories-first'
+    alias lt='eza --long --sort=modified'
+    alias la='eza --long --all --total-size'
+else
+    alias ll='ls -Al --group-directories-first'
+    alias lt='ls -ltr'
+fi
 
-if [ -n "$force_color_prompt" ]; then
-    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
-    else
-	color_prompt=
+[[ -f ~/.bash_aliases ]] && . ~/.bash_aliases
+
+# --- Completion ------------------------------------------------------------
+if ! shopt -oq posix; then
+    if [[ -f /usr/share/bash-completion/bash_completion ]]; then
+        . /usr/share/bash-completion/bash_completion
+    elif [[ -f /etc/bash_completion ]]; then
+        . /etc/bash_completion
     fi
 fi
 
-if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+# Generated completions are cached and only regenerated when the binary
+# changes, instead of spawning kubectl/uv/uvx on every new shell.
+_comp_cache=${XDG_CACHE_HOME:-$HOME/.cache}/bash-completions
+mkdir -p "$_comp_cache"
+_cached_completion() {   # usage: _cached_completion <tool> <generator cmd...>
+    local tool=$1 bin f; shift
+    bin=$(command -v "$tool") || return 0
+    f=$_comp_cache/$tool.bash
+    if [[ ! -s $f || $bin -nt $f ]]; then
+        "$@" >"$f" 2>/dev/null || { rm -f "$f"; return 0; }
+    fi
+    . "$f"
+}
+_cached_completion kubectl kubectl completion bash
+_cached_completion uv      uv generate-shell-completion bash
+_cached_completion uvx     uvx --generate-shell-completion bash
+unset -f _cached_completion; unset _comp_cache
+
+if _has_cmd kubectl; then
+    alias k=kubectl
+    complete -o default -F __start_kubectl k
 fi
-unset color_prompt force_color_prompt
+_has_cmd terraform && complete -C "$(command -v terraform)" terraform
+[[ -x /snap/aws-cli/current/bin/aws_completer ]] && \
+    complete -C /snap/aws-cli/current/bin/aws_completer aws
 
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
-esac
+# --- Prompt and hooks: keep this block LAST and in this order --------------
+# bash-preexec first so starship and atuin share it instead of fighting
+# over the DEBUG trap; zoxide last as its docs recommend.
+[[ -f ~/.bash-preexec.sh ]] && . ~/.bash-preexec.sh
 
-# enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
+if _has_cmd starship; then
+    _win_title() { printf '\e]0;%s@%s: %s\a' "$USER" "${HOSTNAME%%.*}" "${PWD/#$HOME/\~}"; }
+    starship_precmd_user_func=_win_title
+    eval "$(starship init bash)"
 fi
-
-# Change the colour of directories to be more readable against a dark background
-# reference: https://askubuntu.com/questions/466198/how-do-i-change-the-color-for-directories-with-ls-in-the-console
-LS_COLORS=$LS_COLORS:'ow=01;33:tw=01;36:di=01;36:'
-export LS_COLORS
-
-# some more ls aliases
-# alias ll='ls -l --group-directories-first'
-# alias lt='ls -lart'
-alias ll='eza --long --all --group-directories-first --total-size'
-alias lt='eza -snew -l'
-alias l='ls -l'
-alias la='ls -Al'
-
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
-
-# enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).
-if ! shopt -oq posix; then
-  if [ -f /usr/share/bash-completion/bash_completion ]; then
-    . /usr/share/bash-completion/bash_completion
-  elif [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
-  fi
-fi
-
-# Starship prompt
-eval "$(starship init bash)"
-
-# zoxide
-eval "$(zoxide init bash)"
-
-complete -C /usr/bin/terraform terraform
-complete -C '/snap/aws-cli/current/bin/aws_completer' aws
-
-source <(kubectl completion bash)
-alias k=kubectl
-complete -o default -F __start_kubectl k
-
-eval "$(uv generate-shell-completion bash)"
-eval "$(uvx --generate-shell-completion bash)"
-
-# Added a 1password ssh agent sock statement to allow passthrough to devcontainers
-export SSH_AUTH_SOCK=~/.1password/agent.sock
-
-. "$HOME/.atuin/bin/env"
-
-[[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
-eval "$(atuin init bash)"
-
-# DOTNET configuration for .net6 for az400 learning
-PATH=$PATH:"$HOME/.local/dotnet"
-export DOTNET_ROOT=$HOME/.local/dotnet
-
-# Updating umask
-umask 0077
-
+_has_cmd atuin  && eval "$(atuin init bash)"
+_has_cmd zoxide && eval "$(zoxide init bash)"
